@@ -91,11 +91,7 @@ class HumanAPI(object):
 
         if accessToken is None: raise Error('You must provide a HumanAPI Access Token')
         self.accessToken = accessToken
-        # dc = 'us1'
-        # if accessToken.find('-'):
-        #     dc = accessToken.split('-')[1]
         global ROOT
-        # ROOT = ROOT.replace('https://api.', 'https://'+dc+'.api.')
 
         # Profile resources
         self.profile = Profile(self)
@@ -108,7 +104,7 @@ class HumanAPI(object):
         self.heart_rate = HeartRate(self)
         self.height = Height(self)
         self.weight = Weight(self)
-        # Chronological resources
+        # Periodical resources
         self.activity = Activity(self)
         self.location = Location(self)
         self.sleep = Sleep(self)
@@ -121,12 +117,12 @@ class HumanAPI(object):
         # params['access_token'] = self.accessToken
         params = json.dumps(params)
         self.log('GET  %s%s %s' % (ROOT, url, params))
-        sys.stdout.write('GET  %s%s %s' % (ROOT, url, params))
-        sys.stdout.flush()
+        # sys.stdout.write('GET  %s%s %s' % (ROOT, url, params))
+        # sys.stdout.flush()
         start = time.time()
         r = requests.get('%s%s' % (ROOT, url), headers={
             'authorization':'Bearer ' +self.accessToken,
-            # 'accept': 'application/json',
+            'accept': 'application/json',
             'user-agent': 'HumanAPI-Python/1.0.0'
             })
         try:
@@ -134,16 +130,16 @@ class HumanAPI(object):
         except:
             remote_addr = (None, None) #we use two private fields when getting the remote_addr, so be a little robust against errors
 
-        sys.stdout.write("Response: %s%%   \r" % (r) )
-        sys.stdout.flush()
+        # sys.stdout.write("Response: %s%%   \r" % (r) )
+        # sys.stdout.flush()
         response_body = r.text
         complete_time = time.time() - start
         self.log('Received %s in %.2fms: %s' % (r.status_code, complete_time * 1000, r.text))
         self.last_request = {'url': url, 'request_body': params, 'response_body': r.text, 'remote_addr': remote_addr, 'response': r, 'time': complete_time}
 
         result = json.loads(response_body)
-        sys.stdout.write("JSON: %s%%   \r" % (result) )
-        sys.stdout.flush()
+        # sys.stdout.write("JSON: %s%%   \r" % (result) )
+        # sys.stdout.flush()
         if r.status_code != requests.codes.ok:
             raise self.cast_error(result)
         return result
@@ -188,19 +184,10 @@ class Profile(object):
         """Retrive user's profile information
 
         Args:
-           type (string): the type of folders to return "campaign", "autoresponder", or "template"
 
         Returns:
-           array.  structs for each folder, including:::
-               folder_id (int): Folder Id for the given folder, this can be used in the campaigns() function to filter on.
-               name (string): Name of the given folder
-               date_created (string): The date/time the folder was created
-               type (string): The type of the folders being returned, just to make sure you know.
-               cnt (int): number of items in the folder.
 
         Raises:
-           ValidationError:
-           Error: A general HumanAPI error has occurred
         """
         _params = {}
         return self.master.call('/profile', _params)
@@ -235,7 +222,10 @@ class GeneticTrait(object):
         return self.master.call(self.resouceUrl, _params)
 
 
+"""
+Base class for data types that are discrete measurements and occur at a point in time.
 
+"""
 class Measurement(object):
 
     def __init__(self, master, resouceUrl):
@@ -301,8 +291,12 @@ class Weight(Measurement):
 
 
 
+"""
+Base class for data types that occur in time periods with a start and end time.
 
-class Chronology(object):
+These can be things such as a walk, sleep, or location, that start at a certain time and end at a certain time.
+"""
+class Periodical(object):
 
     def __init__(self, master, resouceUrl):
         self.master = master
@@ -330,15 +324,15 @@ class Chronology(object):
 
 
 
-class Activity(Chronology):
+class Activity(Periodical):
     def __init__(self, master):
-        Chronology.__init__(self, master, '/activities')
+        Periodical.__init__(self, master, '/activities')
 
-class Location(Chronology):
+class Location(Periodical):
     def __init__(self, master):
-        Chronology.__init__(self, master, '/locations')
+        Periodical.__init__(self, master, '/locations')
 
-class Sleep(Chronology):
+class Sleep(Periodical):
     def __init__(self, master):
-        Chronology.__init__(self, master, '/sleeps')
+        Periodical.__init__(self, master, '/sleeps')
 
