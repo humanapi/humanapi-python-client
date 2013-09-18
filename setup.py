@@ -16,7 +16,6 @@ setup(
     license = 'MIT',
     keywords = 'humanapi sensor data',
     url = 'https://github.org/humanapi/humanapi-python-client/',
-    py_modules = ['mailchimp'],
     install_requires = ['requests >= 0.13.2', 'docopt == 0.4.0'],
     classifiers = [
         'Development Status :: 1 - Beta',
