@@ -17,9 +17,12 @@ def get_authorize_url(redirect_uri):
     return HumanAuth.get_authorize_url(
         response_type='code',
         redirect_uri=redirect_uri,
+        #optional
+        # user='uses@email.com',
+        # mode='edit'
     )
 
-def get_auth_session(code, scope='profile'):
+def get_auth_session(code, scope=''):
     # retrieve the authenticated session (response is a JSON string, so we need a custom decoder)
     session = HumanAuth.get_auth_session(data={
         'scope': scope,

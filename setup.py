@@ -15,7 +15,7 @@ setup(
     long_description = open(os.path.join(os.path.dirname(__file__), 'README')).read(),
     license = 'MIT',
     keywords = 'humanapi sensor data',
-    url = 'https://github.org/humanapi/humanapi-python-client/',
+    url = 'https://github.com/humanapi/humanapi-python-client/',
     install_requires = ['requests >= 0.13.2', 'docopt == 0.4.0'],
     classifiers = [
         'Development Status :: 1 - Beta',

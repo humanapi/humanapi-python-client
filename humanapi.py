@@ -44,7 +44,8 @@ class UserDoesNotExistError(Error):
 class UserNotApprovedError(Error):
     pass
 
-ROOT = 'https://api.humanapi.co/v1/human'
+# ROOT = 'https://api.humanapi.co/v1/human'
+ROOT = 'http://localhost:3003/v1/human'
 ERROR_MAP = {
     'ValidationError': ValidationError,
     'ServerError_MethodUnknown': ServerMethodUnknownError,
@@ -72,11 +73,10 @@ class HumanAPI(object):
         '''Initialize the API client
 
         Args:
-           accessToken (str|None): provide your HumanAPI Access Token.  If this is left as None, we will attempt to get the Access Token from the following locations::
-               - HUMANAPI_ACCESS_TOKEN in the environment vars
-               - ~/.humanapi.token for the user executing the script
-               - /etc/humanapi.token
-           debug (bool): set to True to log all the request and response information to the "humanapi" logger at the INFO level.  When set to false, it will log at the DEBUG level.  By default it will write log entries to STDERR
+           accessToken (str|None): provide your HumanAPI Access Token.
+           debug (bool): set to True to log all the request and response information to
+           the "humanapi" logger at the INFO level.  When set to false, it will log at the DEBUG level.
+           By default it will write log entries to STDERR
        '''
 
         # self.session = requests.session()
@@ -99,6 +99,7 @@ class HumanAPI(object):
         # Profile resources
         self.profile = Profile(self)
         self.human = Human(self)
+
         # Measurement resources
         self.blood_glucose = BloodGlucose(self)
         self.blood_pressure = BloodPressure(self)
@@ -107,10 +108,12 @@ class HumanAPI(object):
         self.heart_rate = HeartRate(self)
         self.height = Height(self)
         self.weight = Weight(self)
+
         # Periodical resources
         self.activity = Activity(self)
         self.location = Location(self)
         self.sleep = Sleep(self)
+
         # Other resources
         self.genetic_trait = GeneticTrait(self)
 
@@ -120,11 +123,9 @@ class HumanAPI(object):
         # params['access_token'] = self.accessToken
         params = json.dumps(params)
         self.log('GET  %s%s %s' % (ROOT, url, params))
-        # sys.stdout.write('GET  %s%s %s' % (ROOT, url, params))
-        # sys.stdout.flush()
         start = time.time()
         r = requests.get('%s%s' % (ROOT, url), headers={
-            'authorization':'Bearer ' +self.accessToken,
+            'Authorization':'Bearer ' +self.accessToken,
             'accept': 'application/json',
             'user-agent': 'HumanAPI-Python/1.0.0'
             })
@@ -141,8 +142,6 @@ class HumanAPI(object):
         self.last_request = {'url': url, 'request_body': params, 'response_body': r.text, 'remote_addr': remote_addr, 'response': r, 'time': complete_time}
 
         result = json.loads(response_body)
-        # sys.stdout.write("JSON: %s%%   \r" % (result) )
-        # sys.stdout.flush()
         if r.status_code != requests.codes.ok:
             raise self.cast_error(result)
         return result
@@ -287,9 +286,6 @@ class Height(Measurement):
 class Weight(Measurement):
     def __init__(self, master):
         Measurement.__init__(self, master, '/weight')
-
-
-
 
 
 
