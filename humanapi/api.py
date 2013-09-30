@@ -44,8 +44,7 @@ class UserDoesNotExistError(Error):
 class UserNotApprovedError(Error):
     pass
 
-# ROOT = 'https://api.humanapi.co/v1/human'
-ROOT = 'http://localhost:3003/v1/human'
+ROOT = 'https://api.humanapi.co/v1/human'
 ERROR_MAP = {
     'ValidationError': ValidationError,
     'ServerError_MethodUnknown': ServerMethodUnknownError,
