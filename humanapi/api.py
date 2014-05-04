@@ -320,6 +320,10 @@ class Periodical(object):
         _params = {}
         return self.master.call(self.resouceUrl + '/summary/' + day, _params)
 
+    def summaries(self):
+        _params = {}
+        return self.master.call(self.resouceUrl + '/summaries', _params)
+
 
 
 class Activity(Periodical):
